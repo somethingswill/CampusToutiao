@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.campusToutiao.CampusToutiaoEE.dao.NewsMapper" >
+  <resultMap id="BaseResultMap" type="com.campusToutiao.CampusToutiaoEE.entity.News" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="news_title" property="newsTitle" jdbcType="VARCHAR" />
+    <result column="news_imgs" property="newsImgs" jdbcType="VARCHAR" />
+    <result column="like_count" property="likeCount" jdbcType="INTEGER" />
+    <result column="dislike_count" property="dislikeCount" jdbcType="INTEGER" />
+    <result column="comment_count" property="commentCount" jdbcType="INTEGER" />
+    <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+    <result column="category_id" property="categoryId" jdbcType="INTEGER" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+  </resultMap>
+  <resultMap id="ResultMapWithBLOBs" type="com.campusToutiao.CampusToutiaoEE.entity.News" extends="BaseResultMap" >
+    <result column="news_content" property="newsContent" jdbcType="LONGVARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, news_title, news_imgs, like_count, dislike_count, comment_count, create_date, 
+    category_id, user_id
+  </sql>
+  <sql id="Blob_Column_List" >
+    news_content
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="ResultMapWithBLOBs" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_news
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <select id="getAllNewsCount" resultType="java.lang.Integer" >
+    select count(1)
+    from tb_news
+  </select>
+  <select id="getAllNewsListInPage" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_news
+    order by create_date desc
+    limit #{pageIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+  </select>
+  <select id="getNewsListByCategoryIdInPage" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_news
+    where category_id = #{categoryId,jdbcType=INTEGER}
+    order by create_date desc
+    limit #{pageIndex,jdbcType=INTEGER}, #{pageSize,jdbcType=INTEGER}
+  </select>
+  <select id="getNewsListByCategoryId" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_news
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </select>
+  <select id="getHotNewsList" resultMap="ResultMapWithBLOBs">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from tb_news
+    order by comment_count desc
+    limit 0, 10
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from tb_news
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <delete id="deleteNewsByCategoryId" >
+    delete from tb_news
+    where category_id = #{categoryId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.campusToutiao.CampusToutiaoEE.entity.News" >
+    insert into tb_news (id, news_title, news_imgs, 
+      like_count, dislike_count, comment_count, 
+      create_date, category_id, user_id, 
+      news_content)
+    values (#{id,jdbcType=INTEGER}, #{newsTitle,jdbcType=VARCHAR}, #{newsImgs,jdbcType=VARCHAR}, 
+      #{likeCount,jdbcType=INTEGER}, #{dislikeCount,jdbcType=INTEGER}, #{commentCount,jdbcType=INTEGER}, 
+      #{createDate,jdbcType=TIMESTAMP}, #{categoryId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, 
+      #{newsContent,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.campusToutiao.CampusToutiaoEE.entity.News" >
+    insert into tb_news
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="newsTitle != null" >
+        news_title,
+      </if>
+      <if test="newsImgs != null" >
+        news_imgs,
+      </if>
+      <if test="likeCount != null" >
+        like_count,
+      </if>
+      <if test="dislikeCount != null" >
+        dislike_count,
+      </if>
+      <if test="commentCount != null" >
+        comment_count,
+      </if>
+      <if test="createDate != null" >
+        create_date,
+      </if>
+      <if test="categoryId != null" >
+        category_id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="newsContent != null" >
+        news_content,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="newsTitle != null" >
+        #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="newsImgs != null" >
+        #{newsImgs,jdbcType=VARCHAR},
+      </if>
+      <if test="likeCount != null" >
+        #{likeCount,jdbcType=INTEGER},
+      </if>
+      <if test="dislikeCount != null" >
+        #{dislikeCount,jdbcType=INTEGER},
+      </if>
+      <if test="commentCount != null" >
+        #{commentCount,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="categoryId != null" >
+        #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="newsContent != null" >
+        #{newsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.campusToutiao.CampusToutiaoEE.entity.News" >
+    update tb_news
+    <set >
+      <if test="newsTitle != null" >
+        news_title = #{newsTitle,jdbcType=VARCHAR},
+      </if>
+      <if test="newsImgs != null" >
+        news_imgs = #{newsImgs,jdbcType=VARCHAR},
+      </if>
+      <if test="likeCount != null" >
+        like_count = #{likeCount,jdbcType=INTEGER},
+      </if>
+      <if test="dislikeCount != null" >
+        dislike_count = #{dislikeCount,jdbcType=INTEGER},
+      </if>
+      <if test="commentCount != null" >
+        comment_count = #{commentCount,jdbcType=INTEGER},
+      </if>
+      <if test="createDate != null" >
+        create_date = #{createDate,jdbcType=TIMESTAMP},
+      </if>
+      <if test="categoryId != null" >
+        category_id = #{categoryId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="newsContent != null" >
+        news_content = #{newsContent,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.campusToutiao.CampusToutiaoEE.entity.News" >
+    update tb_news
+    set news_title = #{newsTitle,jdbcType=VARCHAR},
+      news_imgs = #{newsImgs,jdbcType=VARCHAR},
+      like_count = #{likeCount,jdbcType=INTEGER},
+      dislike_count = #{dislikeCount,jdbcType=INTEGER},
+      comment_count = #{commentCount,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER},
+      news_content = #{newsContent,jdbcType=LONGVARCHAR}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.campusToutiao.CampusToutiaoEE.entity.News" >
+    update tb_news
+    set news_title = #{newsTitle,jdbcType=VARCHAR},
+      news_imgs = #{newsImgs,jdbcType=VARCHAR},
+      like_count = #{likeCount,jdbcType=INTEGER},
+      dislike_count = #{dislikeCount,jdbcType=INTEGER},
+      comment_count = #{commentCount,jdbcType=INTEGER},
+      create_date = #{createDate,jdbcType=TIMESTAMP},
+      category_id = #{categoryId,jdbcType=INTEGER},
+      user_id = #{userId,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
